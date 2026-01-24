@@ -1,7 +1,9 @@
+import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from BaseDatos import *
+from Pantalla_Ticket import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -9,6 +11,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Caja registradora")
         #self.showFullScreen() # para que ocupe toda la pantalla
         self.setGeometry(100,100,600,400)
+
+        self.idmesa = 5 # de momento va a ser siempre la mesa 5
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -91,17 +95,45 @@ class MainWindow(QMainWindow):
 
     def crear_acciones(self):
         acciones = {
-            'Guardar': (0,0), 'Abrir': (0,1), 'Cobrar': (0,2),
-            'Borrar': (1,0), 'Ticket': (1,1), 'Visa': (1,2),
-            'Salir': (2,0), 'Traspasar': (2,1), 'Editar Producto': (2,2),
+            'Ticket': self.accion_ticket,
+            'Cobrar': self.accion_cobrar,
+            'Borrar': self.accion_borrar,
+            'Visa': self.accion_visa,
+            'Salir': self.accion_salir_app,
+            'Editar producto': self.accion_editar_producto
+        }
+        posiciones = {
+            'Ticket': (0,0), 'Cobrar': (0,2),
+            'Borrar': (1,0), 'Visa': (1,2),
+            'Salir': (2,0), 'Editar producto': (2,2),
         }
         
-        for texto, posicion in acciones.items():
-            accion = QPushButton(texto)
-            accion.setStyleSheet("font-size: 13px;")
-            #accion.clicked.connet()
-            self.layout_acciones.addWidget(accion, *posicion)
+        for texto, funcion in acciones.items():
+            boton =QPushButton(texto)
+            boton.setStyleSheet("font-size: 13px;")
+            boton.clicked.connect(funcion)
+            self.layout_acciones.addWidget(boton, *posiciones[texto])
 
+    
+    def accion_salir_app(self):
+        mensaje = QMessageBox.warning(self, "Atención", "¿Seguro que quiere salir?", QMessageBox.Ok | QMessageBox.Cancel)
+        if mensaje == QMessageBox.Ok: # si presiona el boton de ok sale
+            sys.exit("Cerrando aplicacion...")
+
+    def accion_ticket(self):
+        self.ventana_ticket = TicketWindow(self.idmesa)
+        self.ventana_ticket.show()
+    
+    def accion_cobrar(self):
+        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+    
+    def accion_borrar(self):
+        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+    def accion_visa(self):
+        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+    def accion_editar_producto(self):
+        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+    
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()

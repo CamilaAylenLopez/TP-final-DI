@@ -99,11 +99,13 @@ def agregar_consumo(idProducto, idMesa, cantidad):
 # FUNCIONES VER
 
 # VER CONSUMO DE UNA MESA
-def ver_consumo(idMesa):
+def ver_consumo_por_mesa(idMesa):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT * FROM consumo WHERE idmesa = (?)", (idMesa,))
+    cursor.execute("""SELECT producto.nombre, consumo.cantidad, producto.precio  
+                   FROM consumo JOIN producto ON consumo.idProducto = producto.id
+                   WHERE idmesa = (?)""", (idMesa,))
     consumo = cursor.fetchall()
 
     conexion.close()
@@ -240,6 +242,29 @@ def modificar_estado_mesa(estado, id):
 
     conexion.close()
     return 0
+
+# para que pueda aparecer en el main y en el ticket antes de pagar y q se cierre la mesa
+# DESPUÉS INTEGRARLO CON LA FUNCIÓN CERRAR_MESA !!!!!!!!
+def calcular_total_provisorio(idmesa):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+                   SELECT consumo.cantidad, producto.precio
+                   FROM consumo JOIN producto ON consumo.idProducto = producto.id
+                   WHERE consumo.idMesa = ?
+                   """, (idmesa,))
+    
+    productos = cursor.fetchall()
+
+    total = 0
+    for precio, cantidad in productos:
+        total += precio * cantidad
+    
+    conexion.commit()
+    conexion.close()
+    
+    return total
 
 def cerrar_mesa(idmesa, metodoPago):
     conexion = conectar()

@@ -74,4 +74,8 @@ agregar_consumo(4, 1, 1)
 
 print (cerrar_mesa(1, "tarjeta"))
 
+modificar_estado_mesa("activo", 5)
+agregar_consumo(2, 5, 3)
+agregar_consumo(4, 5, 1)
+
 print("Categoria desayuno productos... ", ver_productos_por_categoria("Desayunos"))
