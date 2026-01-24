@@ -48,6 +48,7 @@ agregar_producto("Zumo natural", 3.50, "Refrescos")
 agregar_producto("Zumo melocoton", 2.50, "Refrescos")
 
 print("Productos agregados")
+
 # VER LOS PRODUCTOS
 productos = ver_productos()
 for producto in productos:
@@ -72,3 +73,5 @@ agregar_consumo(2, 1, 3)
 agregar_consumo(4, 1, 1)
 
 print (cerrar_mesa(1, "tarjeta"))
+
+print("Categoria desayuno productos... ", ver_productos_por_categoria("Desayunos"))

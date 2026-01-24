@@ -153,6 +153,17 @@ def ver_productos():
     conexion.close()
     return productos
 
+# VER PRODUCTOS POR CATEGORIA
+def ver_productos_por_categoria(categoria):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id, nombre, precio FROM producto WHERE categoria = (?)", (categoria,))
+    productos = cursor.fetchall()
+
+    conexion.close()
+    return productos
+
 # VER MESAS
 def ver_mesas():
     conexion = conectar()
