@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
         #self.showFullScreen() # para que ocupe toda la pantalla
         self.setGeometry(100,100,600,400)
 
-        self.idmesa = 5 # de momento va a ser siempre la mesa 5
+        self.idmesa = 0 # de momento va a ser siempre la mesa 0
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -42,12 +42,12 @@ class MainWindow(QMainWindow):
         self.categoria = "Desayuno" # la categoria inicial va a ser el desyuno
         self.layout_categorias = QGridLayout()
         self.widget_categorias.setLayout(self.layout_categorias)
-        self.crear_categorias()
+        self.mostrar_categorias()
 
         # grid del apartado de lod productos
         self.layout_productos = QGridLayout()
         self.widget_productos.setLayout(self.layout_productos)
-        self.crear_productos(self.categoria)
+        self.mostrar_productos(self.categoria)
 
         # grid del apartado de las acciones
         self.layout_acciones = QGridLayout()
@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
         self.cargar_productos_anteriores()
         #self.btnMesa.clicked.connect()
 
-    def crear_categorias(self):
+    def mostrar_categorias(self):
         categorias = {
             'Desayuno': (0,0), 'Almuerzo': (0,1),
             'Merienda': (1,0), 'Refrescos': (1,1)
@@ -75,10 +75,10 @@ class MainWindow(QMainWindow):
         for texto, posicion in categorias.items():
             categoria = QPushButton(texto)
             categoria.setStyleSheet("font-size: 18px;")
-            categoria.clicked.connect(lambda checked=False, t=texto: self.crear_productos(t)) # !!!! si no pongo esto así toma el último valor de texto por ende solo aparecen los refrescos
+            categoria.clicked.connect(lambda checked=False, t=texto: self.mostrar_productos(t)) # !!!! si no pongo esto así toma el último valor de texto por ende solo aparecen los refrescos
             self.layout_categorias.addWidget(categoria, *posicion)
     
-    def crear_productos(self, categoria):
+    def mostrar_productos(self, categoria):
         productos = ver_productos_por_categoria(categoria)
         print(productos)
 
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         precio = str(calcular_total_provisorio(self.idmesa))
         self.total.setText("Total: " + precio)
         
-    def agregar_al_ticket(self, nombre, idProducto):        
+    def agregar_al_ticket(self, idProducto):        
         agregar_consumo(idProducto, self.idmesa, 1)
         self.cargar_productos_anteriores()
 
@@ -165,7 +165,6 @@ class MainWindow(QMainWindow):
         self.total.setText("")
         self.ticket_productos.setText("")
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
-        
 
     def accion_visa(self):
         self.accion_ticket()

@@ -22,7 +22,7 @@ class TicketWindow(QWidget):
 
     def mostrarTicket(self):
         consumo = ver_consumo_por_mesa(self.id)
-        print(ver_consumo_por_mesa(5))
+        print(ver_consumo_por_mesa(0))
         for nombre, cantidad, precio in consumo:
             subtotal = cantidad * precio
 

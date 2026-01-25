@@ -56,6 +56,7 @@ for producto in productos:
 
 
 # agregar MESAS
+agregar_mesa(0, "vacio")
 agregar_mesa(1, "vacio")
 agregar_mesa(2, "vacio")
 agregar_mesa(3, "vacio")
