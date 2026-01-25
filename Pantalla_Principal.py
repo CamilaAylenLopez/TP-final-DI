@@ -61,6 +61,9 @@ class MainWindow(QMainWindow):
         self.layout_ticket.addWidget(self.btnMesa)
         self.ticket_productos = QLabel("")
         self.layout_ticket.addWidget(self.ticket_productos)
+        self.total = QLabel("")
+        self.layout_ticket.addWidget(self.total)
+        self.cargar_productos_anteriores()
         #self.btnMesa.clicked.connect()
 
     def crear_categorias(self):
@@ -102,12 +105,18 @@ class MainWindow(QMainWindow):
             if widget:
                 widget.deleteLater()
 
-    def agregar_al_ticket(self, nombre, idProducto):
-        # SI SE CIERRA Y SE VUELVE A ABRIR TIENE QUE APARECER LO QUE HABÑIA ANTEEEEEEEEEEEEEEEEEEEEEE !!!!!!!!!!!!!!!
+    def cargar_productos_anteriores(self):
+        productos = ver_consumo_por_mesa(self.idmesa) #para que se carguen los anteriores
+        self.ticket_productos.clear()
+        for n, c, p in productos:
+            self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c} --  {n}   ---   precio: {p}")
+
+        precio = str(calcular_total_provisorio(self.idmesa))
+        self.total.setText("Total: " + precio)
+        
+    def agregar_al_ticket(self, nombre, idProducto):        
         agregar_consumo(idProducto, self.idmesa, 1)
-        productos = self.ticket_productos.text() # estos son los productos que ya se habían cargado antes
-        precio = ver_precio_producto(idProducto)
-        self.ticket_productos.setText(productos + f"\n{nombre}   ---   precio: {precio}")
+        self.cargar_productos_anteriores()
 
     def crear_acciones(self):
         acciones = {
@@ -129,7 +138,6 @@ class MainWindow(QMainWindow):
             boton.setStyleSheet("font-size: 13px;")
             boton.clicked.connect(funcion)
             self.layout_acciones.addWidget(boton, *posiciones[texto])
-
     
     def accion_salir_app(self):
         mensaje = QMessageBox.warning(self, "Atención", "¿Seguro que quiere salir?", QMessageBox.Ok | QMessageBox.Cancel)
@@ -138,23 +146,36 @@ class MainWindow(QMainWindow):
 
     def accion_ticket(self):
         self.ventana_ticket = TicketWindow(self.idmesa)
+        QMessageBox.information(self, "Ticket", "Se imprimio el ticket")
         self.ventana_ticket.show()
-    
-    def accion_cobrar(self):
-        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
     
     def accion_borrar(self):
         eliminar_consumo(self.idmesa)
-        print("VERIFICRA QUE SE ELIMINO: ")
+        print("VERIFICRA QUE SE ELIMINO (SI APARECEN CORCHETES VACIOS ES XQ SI SE LIMINO): ")
         consumo = ver_consumo_por_mesa(self.idmesa)
         for c in consumo:
             print(c)
+        
+        self.total.setText("")
+        self.ticket_productos.setText("")
     
+    def accion_cobrar(self):
+        self.accion_ticket()
+        total = str(cerrar_mesa(self.idmesa, "efectivo"))
+        self.total.setText("")
+        self.ticket_productos.setText("")
+        QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
+        
+
     def accion_visa(self):
-        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+        self.accion_ticket()
+        total = str(cerrar_mesa(self.idmesa, "tarjeta"))
+        self.total.setText("")
+        self.ticket_productos.setText("")
+        QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
 
     def accion_editar_producto(self):
-        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+        QMessageBox.information(self, "Atención", "Proximamente")
     
 if __name__ == "__main__":
     app = QApplication([])

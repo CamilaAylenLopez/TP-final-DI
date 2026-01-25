@@ -8,7 +8,7 @@ class TicketWindow(QWidget):
     def __init__(self, idmesa):
         super().__init__()
         self.setWindowTitle("Ticket")
-        self.setGeometry(100,100,600,400)
+        self.setGeometry(500,200,600,400)
 
         self.layout_principal = QVBoxLayout()
 
