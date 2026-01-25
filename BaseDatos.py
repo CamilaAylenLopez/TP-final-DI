@@ -19,7 +19,6 @@ def crear_tablas():
     CREATE TABLE IF NOT EXISTS mesa (
         id INTEGER PRIMARY KEY,
         estado TEXT,
-        idConsumo INTEGER
     );""")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS consumo (
@@ -59,13 +58,13 @@ def agregar_producto(nombre, precio, categoria):
     conexion.commit()
     conexion.close()
 
-def agregar_mesa(id, estado, idconsumo):
+def agregar_mesa(id, estado):
     conexion = conectar()
     cursor = conexion.cursor()
 
     cursor.execute(
-        "INSERT INTO mesa (id, estado, idconsumo) VALUES (?, ?, ?)",
-        (id, estado, idconsumo)
+        "INSERT INTO mesa (id, estado) VALUES (?, ?)",
+        (id, estado)
     )
 
     conexion.commit()
@@ -133,6 +132,17 @@ def ver_venta(id):
     conexion.close()
     return venta
 
+# VER PRECIO DE UN PRODUCTO
+def ver_precio_producto(id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT precio FROM producto WHERE id = (?)", (id,))
+    precio = cursor.fetchone()
+
+    conexion.close()
+    return precio[0]
+
 # VER VENTAS
 def ver_ventas():
     conexion = conectar()
@@ -180,7 +190,7 @@ def ver_mesas():
 
 
 # FUNCIONES ELIMINAR
-def eliminar_mesa(id):
+###def eliminar_mesa(id):
     conexion = conectar()
     cursor = conexion.cursor()
 
@@ -198,11 +208,11 @@ def eliminar_producto(id):
     conexion.close()
     return 0
 
-def eliminar_consumo(id):
+def eliminar_consumo(idmesa):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("DELETE FROM consumo WHERE id = (?)", (id,))
+    cursor.execute("DELETE FROM consumo WHERE idMesa = (?)", (idmesa,))
     conexion.commit()
     conexion.close()
     return 0
@@ -221,7 +231,8 @@ def modificar_producto(id, nombre, precio, categoria):
     conexion.close()
     return 0
 
-def transladar_mesa(idmesaVieja, idmesaNueva):
+# FUNCIÓN PARA EL FUTURO 
+###def transladar_mesa(idmesaVieja, idmesaNueva):
     conexion = conectar()
     cursor = conexion.cursor()
 

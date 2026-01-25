@@ -4,15 +4,15 @@ crear_tablas()
 print("Base de datos creada")
 
 # AGREGAR PRODUCTOS DESAYUNO
-agregar_producto("Cafe con leche", 1.90, "Desayunos")
-agregar_producto("Americano", 1.70, "Desayunos")
-agregar_producto("Cortado", 1.70, "Desayunos")
-agregar_producto("Cafe solo", 1.50, "Desayunos")
-agregar_producto("Croissant", 1.80, "Desayunos")
-agregar_producto("Napolitana chocolate", 1.50, "Desayunos")
-agregar_producto("Napolitana J&Q", 2.50, "Desayunos")
-agregar_producto("Combo 1", 3.00, "Desayunos")
-agregar_producto("Combo 2", 3.30, "Desayunos")
+agregar_producto("Cafe con leche", 1.90, "Desayuno")
+agregar_producto("Americano", 1.70, "Desayuno")
+agregar_producto("Cortado", 1.70, "Desayuno")
+agregar_producto("Cafe solo", 1.50, "Desayuno")
+agregar_producto("Croissant", 1.80, "Desayuno")
+agregar_producto("Napolitana chocolate", 1.50, "Desayuno")
+agregar_producto("Napolitana J&Q", 2.50, "Desayuno")
+agregar_producto("Combo 1", 3.00, "Desayuno")
+agregar_producto("Combo 2", 3.30, "Desayuno")
 
 # AGREGAR PRODUCTOS MERIENDA
 agregar_producto("Cafe con leche", 1.90, "Merienda")
@@ -56,11 +56,11 @@ for producto in productos:
 
 
 # agregar MESAS
-agregar_mesa(1, "vacio", None)
-agregar_mesa(2, "vacio", None)
-agregar_mesa(3, "vacio", None)
-agregar_mesa(4, "vacio", None)
-agregar_mesa(5, "vacio", None)
+agregar_mesa(1, "vacio")
+agregar_mesa(2, "vacio")
+agregar_mesa(3, "vacio")
+agregar_mesa(4, "vacio")
+agregar_mesa(5, "vacio")
 
 print("Mesas creadas")
 mesas = ver_mesas()
@@ -74,8 +74,9 @@ agregar_consumo(4, 1, 1)
 
 print (cerrar_mesa(1, "tarjeta"))
 
-modificar_estado_mesa("activo", 5)
-agregar_consumo(2, 5, 3)
-agregar_consumo(4, 5, 1)
+# PRUEBA PARA VER SI SE AGREGAN LOS PRODUCTOS A LA TABLA DE CONSUMO
+# modificar_estado_mesa("activo", 5)
+# agregar_consumo(2, 5, 3)
+# agregar_consumo(4, 5, 1)
 
 print("Categoria desayuno productos... ", ver_productos_por_categoria("Desayunos"))

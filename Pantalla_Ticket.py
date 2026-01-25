@@ -29,5 +29,5 @@ class TicketWindow(QWidget):
             linea = QLabel(f"{nombre} x{cantidad} ${subtotal}")
             self.layout_principal.addWidget(linea)
 
-        total = QLabel(str(calcular_total_provisorio(self.id)))
+        total = QLabel("Total: " + str(calcular_total_provisorio(self.id)))
         self.layout_principal.addWidget(total)

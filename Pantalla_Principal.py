@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         grid.addWidget(self.widget_acciones, 2, 2, 1, 1)
 
         # grid del apartado de las categorias
-        self.categoria = "Desayunos" # la categoria inicial va a ser el desyuno
+        self.categoria = "Desayuno" # la categoria inicial va a ser el desyuno
         self.layout_categorias = QGridLayout()
         self.widget_categorias.setLayout(self.layout_categorias)
         self.crear_categorias()
@@ -54,16 +54,25 @@ class MainWindow(QMainWindow):
         self.widget_acciones.setLayout(self.layout_acciones)
         self.crear_acciones()
 
+        #grod del apartado del "ticket"
+        self.layout_ticket = QGridLayout()
+        self.widget_ticket.setLayout(self.layout_ticket)
+        self.btnMesa = QPushButton(f"Mesa nº {self.idmesa}") # PONERLE ESTILO PARA QUE APAREZCA CENTRADO ARRIBA
+        self.layout_ticket.addWidget(self.btnMesa)
+        self.ticket_productos = QLabel("")
+        self.layout_ticket.addWidget(self.ticket_productos)
+        #self.btnMesa.clicked.connect()
+
     def crear_categorias(self):
         categorias = {
             'Desayuno': (0,0), 'Almuerzo': (0,1),
-            'Boyeria': (1,0), 'Refrescos': (1,1)
+            'Merienda': (1,0), 'Refrescos': (1,1)
         }
         
         for texto, posicion in categorias.items():
             categoria = QPushButton(texto)
             categoria.setStyleSheet("font-size: 18px;")
-            #categoria.clicked.connet()
+            categoria.clicked.connect(lambda checked=False, t=texto: self.crear_productos(t)) # !!!! si no pongo esto así toma el último valor de texto por ende solo aparecen los refrescos
             self.layout_categorias.addWidget(categoria, *posicion)
     
     def crear_productos(self, categoria):
@@ -77,7 +86,7 @@ class MainWindow(QMainWindow):
         for id_producto, nombre, precio in productos:
             producto = QPushButton(nombre)
             producto.setStyleSheet("font-size: 14px;")
-            #producto.clicked.conect() --> agregar al ticket 
+            producto.clicked.connect(lambda checked=False, idP = id_producto, n=nombre: self.agregar_al_ticket(n, idP))
             self.layout_productos.addWidget(producto, fila, col)
             
             col += 1
@@ -92,6 +101,13 @@ class MainWindow(QMainWindow):
             widget = item.widget() # agarra el widget y abajo lo elimina
             if widget:
                 widget.deleteLater()
+
+    def agregar_al_ticket(self, nombre, idProducto):
+        # SI SE CIERRA Y SE VUELVE A ABRIR TIENE QUE APARECER LO QUE HABÑIA ANTEEEEEEEEEEEEEEEEEEEEEE !!!!!!!!!!!!!!!
+        agregar_consumo(idProducto, self.idmesa, 1)
+        productos = self.ticket_productos.text() # estos son los productos que ya se habían cargado antes
+        precio = ver_precio_producto(idProducto)
+        self.ticket_productos.setText(productos + f"\n{nombre}   ---   precio: {precio}")
 
     def crear_acciones(self):
         acciones = {
@@ -128,9 +144,15 @@ class MainWindow(QMainWindow):
         mensaje = QMessageBox.information(self, "Atención", "Proximamente")
     
     def accion_borrar(self):
-        mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+        eliminar_consumo(self.idmesa)
+        print("VERIFICRA QUE SE ELIMINO: ")
+        consumo = ver_consumo_por_mesa(self.idmesa)
+        for c in consumo:
+            print(c)
+    
     def accion_visa(self):
         mensaje = QMessageBox.information(self, "Atención", "Proximamente")
+
     def accion_editar_producto(self):
         mensaje = QMessageBox.information(self, "Atención", "Proximamente")
     
