@@ -27,10 +27,10 @@ class MainWindow(QMainWindow):
         self.widget_acciones = QWidget()
 
         # estilos de momento
-        self.widget_categorias.setStyleSheet("background-color: red;")
-        self.widget_productos.setStyleSheet("background-color: green;")
-        self.widget_ticket.setStyleSheet("background-color: blue;")
-        self.widget_acciones.setStyleSheet("background-color: pink;")
+        self.widget_categorias.setStyleSheet("background-color: #4C5C3A;")
+        self.widget_productos.setStyleSheet("background-color: #2F5E11;")
+        self.widget_ticket.setStyleSheet("background-color: #535E47;")
+        self.widget_acciones.setStyleSheet("background-color: #4C5C3A;")
 
         # grid.addWidget(widget, fila, columna, filasQueOcupa, columnasQueOcupa)
         grid.addWidget(self.widget_categorias, 0, 0, 1, 2)
@@ -73,11 +73,28 @@ class MainWindow(QMainWindow):
         
         for texto, posicion in categorias.items():
             categoria = QPushButton(texto)
-            categoria.setStyleSheet("font-size: 18px;")
+            categoria.setCursor(Qt.PointingHandCursor)
+            estilo = "font-size: 18px; border: 2px solid #465435; border-radius: 10px; padding: 20px;"
+
+            if self.categoria == texto:
+                categoria.setStyleSheet(estilo + "color: red; font-weight: bold;")
+            else:
+                categoria.setStyleSheet(estilo + "color: white;")
+
             categoria.clicked.connect(lambda checked=False, t=texto: self.mostrar_productos(t)) # !!!! si no pongo esto así toma el último valor de texto por ende solo aparecen los refrescos
             self.layout_categorias.addWidget(categoria, *posicion)
     
+    def limpiar_categorias(self):
+        while self.layout_categorias.count():
+            item = self.layout_categorias.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
     def mostrar_productos(self, categoria):
+        self.categoria = categoria
+        self.limpiar_categorias()
+        self.mostrar_categorias()
         productos = ver_productos_por_categoria(categoria)
         print(productos)
 
@@ -159,6 +176,9 @@ class MainWindow(QMainWindow):
         self.ticket_productos.setText("")
     
     def accion_cobrar(self):
+        if self.ticket_productos.text() == "":
+            QMessageBox.information(self, "Información", "No hay nada para cobrar")
+            return
         self.accion_ticket()
         total = str(cerrar_mesa(self.idmesa, "efectivo"))
         self.total.setText("")
@@ -166,6 +186,9 @@ class MainWindow(QMainWindow):
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
 
     def accion_visa(self):
+        if self.ticket_productos.text() == "":
+            QMessageBox.information(self, "Información", "No hay nada para cobrar")
+            return
         self.accion_ticket()
         total = str(cerrar_mesa(self.idmesa, "tarjeta"))
         self.total.setText("")
