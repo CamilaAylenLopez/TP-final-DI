@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from BaseDatos import *
+from ConsultasBD import *
 
 class TicketWindow(QWidget):
     def __init__(self, idmesa = -1):

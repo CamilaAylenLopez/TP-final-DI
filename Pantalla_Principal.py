@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from BaseDatos import *
+from ConsultasBD import *
 from Pantalla_Ticket import *
 from Pantalla_EditarProducto import FormularioEmergente
 
@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Caja registradora")
-        self.setGeometry(100,100,600,400)
+        self.setGeometry(300,100,900,600)
 
         self.idmesa = 0 # de momento va a ser siempre la mesa 0
 
@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         for texto, posicion in categorias.items():
             categoria = QPushButton(texto)
             categoria.setCursor(Qt.PointingHandCursor)
-            estilo = "font-size: 18px; border: 2px solid #465435; border-radius: 10px; padding: 20px;"
+            estilo = "font-size: 20px; border: 2px solid #465435; border-radius: 10px; padding: 20px;"
 
             if self.categoria == texto:
                 categoria.setStyleSheet(estilo + "color: red; font-weight: bold;")
@@ -96,7 +96,7 @@ class MainWindow(QMainWindow):
         self.limpiar_categorias()
         self.mostrar_categorias()
         productos = ver_productos_por_categoria(categoria)
-        print(productos)
+        #print(productos)
 
         self.limpiar_productos() # se borran los botones anteriores al cambiar de categoria
 
@@ -104,7 +104,8 @@ class MainWindow(QMainWindow):
         col= 0
         for id_producto, nombre, precio in productos:
             producto = QPushButton(nombre)
-            producto.setStyleSheet("font-size: 14px;")
+            producto.setCursor(Qt.PointingHandCursor)
+            producto.setStyleSheet("font-size: 16px; padding: 30px; font-weight: bold;")
             producto.clicked.connect(lambda checked=False, idP = id_producto: self.agregar_al_ticket(idP))
             self.layout_productos.addWidget(producto, fila, col)
             
@@ -123,6 +124,7 @@ class MainWindow(QMainWindow):
 
     def cargar_productos_anteriores(self):
         productos = ver_consumo_por_mesa(self.idmesa) #para que se carguen los anteriores productos de la mesa
+        
         self.ticket_productos.clear()
         for n, c, p in productos:
             self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c} --  {n}   ---   precio: {p}")

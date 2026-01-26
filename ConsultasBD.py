@@ -1,7 +1,7 @@
 import sqlite3
 
 def conectar():
-    return sqlite3.connect("caja.db") #si no existe lo crea
+    return sqlite3.connect("baseDatos.db") #si no existe lo crea
 
 # CREAR TABLAS
 def crear_tablas():
@@ -18,7 +18,7 @@ def crear_tablas():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS mesa (
         id INTEGER PRIMARY KEY,
-        estado TEXT,
+        estado TEXT
     );""")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS consumo (
@@ -35,8 +35,7 @@ def crear_tablas():
         idMesa INTEGER REFERENCES mesa(id)
     );
     """)
-    # DESPUÉS PARA LO DE VENTA DEBERÍA HACER UN JOIN EN DONDE SE CONECTE CON LA TABLA CONSUMO Y HAGA IDMESA = IDMESA Y 
-    # SELECCIONE TODOS LOS PRODUCTOS QUE CONSUMIO Y Q LO MANDE A UNA FUNCION EN DONDE HAGA LA SUMA
+
     conexion.commit()
     conexion.close()
 
