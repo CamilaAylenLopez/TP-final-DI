@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Caja registradora")
-        self.setGeometry(300,100,900,600)
+        self.setGeometry(300,100,1000,600)
 
         self.idmesa = 0 # de momento va a ser siempre la mesa 0
 
@@ -55,13 +55,20 @@ class MainWindow(QMainWindow):
         self.crear_acciones()
 
         #grod del apartado del "ticket"
-        self.layout_ticket = QGridLayout()
+        self.layout_ticket = QVBoxLayout()
         self.widget_ticket.setLayout(self.layout_ticket)
         self.btnMesa = QPushButton(f"Mesa nº {self.idmesa}")
+        self.btnMesa.setStyleSheet("font-size: 14px;")
         self.layout_ticket.addWidget(self.btnMesa)
+        #scroll
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.layout_ticket.addWidget(self.scroll_area)
+
         self.ticket_productos = QLabel("")
-        self.layout_ticket.addWidget(self.ticket_productos)
+        self.scroll_area.setWidget(self.ticket_productos)
         self.total = QLabel("")
+        self.layout_ticket.addStretch()
         self.layout_ticket.addWidget(self.total)
         self.cargar_productos_anteriores()
 
@@ -128,9 +135,11 @@ class MainWindow(QMainWindow):
         self.ticket_productos.clear()
         for n, c, p in productos:
             self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c} --  {n}   ---   precio: {p}")
+            self.ticket_productos.setStyleSheet("font-size: 16px;")
 
-        precio = str(calcular_total_provisorio(self.idmesa))
+        precio = str(f"{calcular_total_provisorio(self.idmesa):.2f}")
         self.total.setText("Total: " + precio)
+        self.total.setStyleSheet("font-size: 18px; padding: 5px, 10px; color: #D4725D; font-weight: bold;")
         
     def agregar_al_ticket(self, idProducto):
         agregar_consumo(idProducto, self.idmesa, 1)
@@ -153,7 +162,8 @@ class MainWindow(QMainWindow):
         
         for texto, funcion in acciones.items():
             boton =QPushButton(texto)
-            boton.setStyleSheet("font-size: 13px;")
+            boton.setCursor(Qt.PointingHandCursor)
+            boton.setStyleSheet("font-size: 14px; padding: 10px;")
             boton.clicked.connect(funcion)
             self.layout_acciones.addWidget(boton, *posiciones[texto])
     

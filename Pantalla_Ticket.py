@@ -7,7 +7,7 @@ class TicketWindow(QWidget):
     def __init__(self, idmesa = -1):
         super().__init__()
         self.setWindowTitle("Ticket")
-        self.setGeometry(500,200,600,400)
+        self.setGeometry(500,100,300,600)
 
         self.id = idmesa
         if self.id == -1:
@@ -17,6 +17,8 @@ class TicketWindow(QWidget):
         self.layout_principal = QVBoxLayout()
 
         self.texto = QLabel("Ticket")
+        self.texto.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.texto.setStyleSheet("font-size: 24px;")
         self.layout_principal.addWidget(self.texto)
 
         self.setLayout(self.layout_principal)
@@ -29,8 +31,9 @@ class TicketWindow(QWidget):
         for nombre, cantidad, precio in consumo:
             subtotal = cantidad * precio
 
-            linea = QLabel(f"{nombre} x{cantidad} ${subtotal}")
+            linea = QLabel(f"{cantidad} -- {nombre} -- {subtotal}")
             self.layout_principal.addWidget(linea)
 
-        total = QLabel("Total: " + str(calcular_total_provisorio(self.id)))
+        total = QLabel("Total: " + str(f"{(calcular_total_provisorio(self.id)):.2f}"))
+        total.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.layout_principal.addWidget(total)
