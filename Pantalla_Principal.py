@@ -4,12 +4,12 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from BaseDatos import *
 from Pantalla_Ticket import *
+from Pantalla_EditarProducto import FormularioEmergente
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Caja registradora")
-        #self.showFullScreen() # para que ocupe toda la pantalla
         self.setGeometry(100,100,600,400)
 
         self.idmesa = 0 # de momento va a ser siempre la mesa 0
@@ -57,14 +57,13 @@ class MainWindow(QMainWindow):
         #grod del apartado del "ticket"
         self.layout_ticket = QGridLayout()
         self.widget_ticket.setLayout(self.layout_ticket)
-        self.btnMesa = QPushButton(f"Mesa nº {self.idmesa}") # PONERLE ESTILO PARA QUE APAREZCA CENTRADO ARRIBA
+        self.btnMesa = QPushButton(f"Mesa nº {self.idmesa}")
         self.layout_ticket.addWidget(self.btnMesa)
         self.ticket_productos = QLabel("")
         self.layout_ticket.addWidget(self.ticket_productos)
         self.total = QLabel("")
         self.layout_ticket.addWidget(self.total)
         self.cargar_productos_anteriores()
-        #self.btnMesa.clicked.connect()
 
     def mostrar_categorias(self):
         categorias = {
@@ -89,13 +88,13 @@ class MainWindow(QMainWindow):
         for id_producto, nombre, precio in productos:
             producto = QPushButton(nombre)
             producto.setStyleSheet("font-size: 14px;")
-            producto.clicked.connect(lambda checked=False, idP = id_producto, n=nombre: self.agregar_al_ticket(n, idP))
+            producto.clicked.connect(lambda checked=False, idP = id_producto: self.agregar_al_ticket(idP))
             self.layout_productos.addWidget(producto, fila, col)
             
             col += 1
             if col == 3:
                 col = 0
-                fila += 1
+                fila += 1            
 
     # si cambia de categoria se borran los botones de los productos anteriores
     def limpiar_productos(self):
@@ -106,7 +105,7 @@ class MainWindow(QMainWindow):
                 widget.deleteLater()
 
     def cargar_productos_anteriores(self):
-        productos = ver_consumo_por_mesa(self.idmesa) #para que se carguen los anteriores
+        productos = ver_consumo_por_mesa(self.idmesa) #para que se carguen los anteriores productos de la mesa
         self.ticket_productos.clear()
         for n, c, p in productos:
             self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c} --  {n}   ---   precio: {p}")
@@ -114,7 +113,7 @@ class MainWindow(QMainWindow):
         precio = str(calcular_total_provisorio(self.idmesa))
         self.total.setText("Total: " + precio)
         
-    def agregar_al_ticket(self, idProducto):        
+    def agregar_al_ticket(self, idProducto):
         agregar_consumo(idProducto, self.idmesa, 1)
         self.cargar_productos_anteriores()
 
@@ -125,12 +124,12 @@ class MainWindow(QMainWindow):
             'Borrar': self.accion_borrar,
             'Visa': self.accion_visa,
             'Salir': self.accion_salir_app,
-            'Editar producto': self.accion_editar_producto
+            'Editar precios': self.accion_editar_producto
         }
         posiciones = {
             'Ticket': (0,0), 'Cobrar': (0,2),
             'Borrar': (1,0), 'Visa': (1,2),
-            'Salir': (2,0), 'Editar producto': (2,2),
+            'Salir': (2,0), 'Editar precios': (2,2),
         }
         
         for texto, funcion in acciones.items():
@@ -174,7 +173,9 @@ class MainWindow(QMainWindow):
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
 
     def accion_editar_producto(self):
-        QMessageBox.information(self, "Atención", "Proximamente")
+        dialogo = FormularioEmergente()
+        dialogo.exec()
+        self.cargar_productos_anteriores()
     
 if __name__ == "__main__":
     app = QApplication([])

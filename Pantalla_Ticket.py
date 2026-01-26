@@ -1,14 +1,18 @@
-import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from BaseDatos import *
 
 class TicketWindow(QWidget):
-    def __init__(self, idmesa):
+    def __init__(self, idmesa = -1):
         super().__init__()
         self.setWindowTitle("Ticket")
         self.setGeometry(500,200,600,400)
+
+        self.id = idmesa
+        if self.id == -1:
+            QMessageBox.warning(self, "Error inesperado", "Ha ocurrido un error inesperado al no encontrar la mesa")
+            return
 
         self.layout_principal = QVBoxLayout()
 
@@ -17,12 +21,11 @@ class TicketWindow(QWidget):
 
         self.setLayout(self.layout_principal)
 
-        self.id = idmesa
         self.mostrarTicket()
 
     def mostrarTicket(self):
         consumo = ver_consumo_por_mesa(self.id)
-        print(ver_consumo_por_mesa(0))
+        #print(ver_consumo_por_mesa(0))
         for nombre, cantidad, precio in consumo:
             subtotal = cantidad * precio
 

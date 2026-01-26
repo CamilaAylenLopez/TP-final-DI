@@ -217,6 +217,20 @@ def eliminar_consumo(idmesa):
     conexion.close()
     return 0
 
+# OBTENER ID PRODUCTO
+def obtener_id_producto(nombre, categoria):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM producto WHERE nombre = ? AND categoria = ?", (nombre, categoria))
+
+    resultado = cursor.fetchone()
+    conexion.close()
+
+    if resultado:
+        return resultado[0]
+    else:
+        return None
 
 
 # FUNCIONES MODIFICAR
