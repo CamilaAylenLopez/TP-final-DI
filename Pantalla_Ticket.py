@@ -31,9 +31,11 @@ class TicketWindow(QWidget):
         for nombre, cantidad, precio in consumo:
             subtotal = cantidad * precio
 
-            linea = QLabel(f"{cantidad} -- {nombre} -- {subtotal}")
+            linea = QLabel(f"{cantidad}  {nombre}   ---    ${subtotal}")
             self.layout_principal.addWidget(linea)
 
-        total = QLabel("Total: " + str(f"{(calcular_total_provisorio(self.id)):.2f}"))
+        total_provisorio = round(calcular_total_provisorio(self.id), 2)
+
+        total = QLabel("Total: " + str(total_provisorio))
         total.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.layout_principal.addWidget(total)

@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 def conectar():
     return sqlite3.connect("baseDatos.db") #si no existe lo crea
@@ -30,7 +31,7 @@ def crear_tablas():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS venta (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        precio REAL,
+        total REAL,
         metodoPago TEXT,
         idMesa INTEGER REFERENCES mesa(id)
     );
@@ -69,13 +70,13 @@ def agregar_mesa(id, estado):
     conexion.commit()
     conexion.close()
 
-def agregar_venta(precio, metodoPago, idMesa):
+def agregar_venta(total, metodoPago, idMesa):
     conexion = conectar()
     cursor = conexion.cursor()
 
     cursor.execute(
-        "INSERT INTO venta (precio, metodoPago, idMesa) VALUES (?, ?, ?)",
-        (precio, metodoPago, idMesa)
+        "INSERT INTO venta (total, metodoPago, idMesa) VALUES (?, ?, ?)",
+        (total, metodoPago, idMesa)
     )
 
     conexion.commit()
@@ -93,6 +94,28 @@ def agregar_consumo(idProducto, idMesa, cantidad):
     conexion.commit()
     conexion.close()
 
+def ver_cantidad_de_un_producto(idmesa, idproducto):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute(
+        "SELECT cantidad FROM consumo WHERE idMesa =(?) AND idProducto = (?)",
+        (idmesa, idproducto,)
+    )
+
+    cantidad = cursor.fetchone()
+    conexion.close()
+
+    return cantidad
+
+def sumar_producto_al_consumo(idmesa, idproducto):
+    conexion = conectar()
+    cursor = conexion.cursor()
+    
+    cursor.execute("UPDATE consumo SET cantidad = cantidad + 1 WHERE idMesa = (?) AND idProducto = (?)", (idmesa, idproducto))
+
+    conexion.commit()
+    conexion.close()
 
 # FUNCIONES VER
 
@@ -306,10 +329,19 @@ def cerrar_mesa(idmesa, metodoPago):
     for precio, cantidad in productos:
         total += precio * cantidad
     
-    cursor.execute("INSErT INTO venta (precio, metodoPago, idMesa) VALUES (?,?,?)", (total, metodoPago, idmesa))
+    total = round(total, 2)
+
+    cursor.execute("INSERT INTO venta (total, metodoPago, idMesa) VALUES (?,?,?)", (total, metodoPago, idmesa))
+    idVenta = cursor.lastrowid
     cursor.execute("UPDATE mesa SET estado = ? WHERE id = ?", ("vacio", idmesa))
     cursor.execute("DELETE FROM consumo WHERE idMesa = ?", (idmesa,))
     conexion.commit()
     conexion.close()
+
+    guardar_historial_venta(idVenta, idmesa, total, metodoPago)
     
     return total
+
+def guardar_historial_venta(idventa, idmesa, total, metodoPago):
+    with open("historial_ventas.txt", "a", encoding="utf-8") as f:
+        f.write(f"ID: {idventa} | Mesa: {idmesa} | Total: {total} | Metodo de pago: {metodoPago} | Hora: {datetime.datetime.now().strftime("%d/%m/%Y %H:%M")}\n")

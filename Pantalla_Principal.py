@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
             estilo = "font-size: 20px; border: 2px solid #465435; border-radius: 10px; padding: 20px;"
 
             if self.categoria == texto:
-                categoria.setStyleSheet(estilo + "color: red; font-weight: bold;")
+                categoria.setStyleSheet(estilo + "font-weight: bold; background-color: #3B472D")
             else:
                 categoria.setStyleSheet(estilo + "color: white;")
 
@@ -134,15 +134,23 @@ class MainWindow(QMainWindow):
         
         self.ticket_productos.clear()
         for n, c, p in productos:
-            self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c} --  {n}   ---   precio: {p}")
+            self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c}   --   {n}   ---   {p}")
             self.ticket_productos.setStyleSheet("font-size: 16px;")
 
-        precio = str(f"{calcular_total_provisorio(self.idmesa):.2f}")
+        total = round(calcular_total_provisorio(self.idmesa), 2)
+
+        precio = str(total)
         self.total.setText("Total: " + precio)
         self.total.setStyleSheet("font-size: 18px; padding: 5px, 10px; color: #D4725D; font-weight: bold;")
         
     def agregar_al_ticket(self, idProducto):
-        agregar_consumo(idProducto, self.idmesa, 1)
+        # si ya se habñia seleccionado ese producto se suma y sino se agrega
+        existe = ver_cantidad_de_un_producto(self.idmesa, idProducto)
+        if existe:
+            sumar_producto_al_consumo(self.idmesa, idProducto)
+        else:
+            agregar_consumo(idProducto, self.idmesa, 1)
+
         self.cargar_productos_anteriores()
 
     def crear_acciones(self):
@@ -192,7 +200,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Información", "No hay nada para cobrar")
             return
         self.accion_ticket()
-        total = str(cerrar_mesa(self.idmesa, "efectivo"))
+        total = str(round(cerrar_mesa(self.idmesa, "efectivo"),2))
         self.total.setText("")
         self.ticket_productos.setText("")
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
@@ -202,7 +210,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Información", "No hay nada para cobrar")
             return
         self.accion_ticket()
-        total = str(cerrar_mesa(self.idmesa, "tarjeta"))
+        total = str(round(cerrar_mesa(self.idmesa, "tarjeta"), 2))
         self.total.setText("")
         self.ticket_productos.setText("")
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
