@@ -1,5 +1,8 @@
 from ConsultasBD import *
 
+# aclaración este archivo desbe ser ejecutado solamente si no esta creado el archivo baseDatos.db, sino se crearan duplicados de los datos
+
+
 crear_tablas()
 print("Base de datos creada")
 

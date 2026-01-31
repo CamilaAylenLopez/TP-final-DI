@@ -8,6 +8,7 @@ def conectar():
 def crear_tablas():
     conexion = conectar()
     cursor = conexion.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON;")
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS producto (
@@ -43,9 +44,7 @@ def crear_tablas():
 
 
 
-#FUNCIONES CREAR
-
-# AGREGAR LOS PRODUCTOS
+#FUNCIONES AGREGAR
 def agregar_producto(nombre, precio, categoria):
     conexion = conectar()
     cursor = conexion.cursor()
@@ -94,30 +93,35 @@ def agregar_consumo(idProducto, idMesa, cantidad):
     conexion.commit()
     conexion.close()
 
+
+#FUNCIONES VER
+# Esta función busca la cantidad de veces que se selecciono un profucto en una mesa. Por ejemplo, si pidio una, dos o más cocacolas.
+# Que se complementa con la función de abajo (sumar_producto_al_consumo), ya que si ya se había seleccionado ese producto se suma a la cantidad que habái antes.
+# Por ejemplo si ya había elegido una vez la cocacola, en vez de que se cree otra entrada en el campo de cantidad dentro de la tabla consumo se le suma uno, por ende en pantalla va a parecer como dos cocacolas
 def ver_cantidad_de_un_producto(idmesa, idproducto):
     conexion = conectar()
     cursor = conexion.cursor()
 
     cursor.execute(
-        "SELECT cantidad FROM consumo WHERE idMesa =(?) AND idProducto = (?)",
+        "SELECT cantidad FROM consumo WHERE idMesa =? AND idProducto = ?",
         (idmesa, idproducto,)
     )
 
     cantidad = cursor.fetchone()
     conexion.close()
 
-    return cantidad
+    if cantidad:
+        return cantidad[0]
+    return None
 
 def sumar_producto_al_consumo(idmesa, idproducto):
     conexion = conectar()
     cursor = conexion.cursor()
     
-    cursor.execute("UPDATE consumo SET cantidad = cantidad + 1 WHERE idMesa = (?) AND idProducto = (?)", (idmesa, idproducto))
+    cursor.execute("UPDATE consumo SET cantidad = cantidad + 1 WHERE idMesa = ? AND idProducto = ?", (idmesa, idproducto))
 
     conexion.commit()
     conexion.close()
-
-# FUNCIONES VER
 
 # VER CONSUMO DE UNA MESA
 def ver_consumo_por_mesa(idMesa):
@@ -126,7 +130,7 @@ def ver_consumo_por_mesa(idMesa):
 
     cursor.execute("""SELECT producto.nombre, consumo.cantidad, producto.precio  
                    FROM consumo JOIN producto ON consumo.idProducto = producto.id
-                   WHERE idmesa = (?)""", (idMesa,))
+                   WHERE consumo.idMesa = ?""", (idMesa,))
     consumo = cursor.fetchall()
 
     conexion.close()
@@ -148,22 +152,24 @@ def ver_venta(id):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT * FROM venta WHERE id = (?)", (id,))
+    cursor.execute("SELECT * FROM venta WHERE id = ?", (id,))
     venta = cursor.fetchall()
 
     conexion.close()
     return venta
 
-# VER PRECIO DE UN PRODUCTO
+# VER PRECIO DE UN PRODUCTO A TRAVÉS DEL ID
 def ver_precio_producto(id):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT precio FROM producto WHERE id = (?)", (id,))
+    cursor.execute("SELECT precio FROM producto WHERE id = ?", (id,))
     precio = cursor.fetchone()
 
     conexion.close()
-    return precio[0]
+    if precio:
+        return precio[0]
+    return None
 
 # VER VENTAS
 def ver_ventas():
@@ -192,7 +198,7 @@ def ver_productos_por_categoria(categoria):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT id, nombre, precio FROM producto WHERE categoria = (?)", (categoria,))
+    cursor.execute("SELECT id, nombre, precio FROM producto WHERE categoria = ?", (categoria,))
     productos = cursor.fetchall()
 
     conexion.close()
@@ -209,37 +215,7 @@ def ver_mesas():
     conexion.close()
     return mesas
 
-
-
-# FUNCIONES ELIMINAR
-###def eliminar_mesa(id):
-    conexion = conectar()
-    cursor = conexion.cursor()
-
-    cursor.execute("DELETE FROM mesa WHERE id = (?)", (id,))
-    conexion.commit()
-    conexion.close()
-    return 0
-
-def eliminar_producto(id):
-    conexion = conectar()
-    cursor = conexion.cursor()
-
-    cursor.execute("DELETE FROM producto WHERE id = (?)", (id,))
-    conexion.commit()
-    conexion.close()
-    return 0
-
-def eliminar_consumo(idmesa):
-    conexion = conectar()
-    cursor = conexion.cursor()
-
-    cursor.execute("DELETE FROM consumo WHERE idMesa = (?)", (idmesa,))
-    conexion.commit()
-    conexion.close()
-    return 0
-
-# OBTENER ID PRODUCTO
+# OBTENER EL ID DE UN PRODUCTO PRODUCTO
 def obtener_id_producto(nombre, categoria):
     conexion = conectar()
     cursor = conexion.cursor()
@@ -254,26 +230,33 @@ def obtener_id_producto(nombre, categoria):
     else:
         return None
 
+# FUNCIONES ELIMINAR
+def eliminar_producto(id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("DELETE FROM producto WHERE id = ?", (id,))
+    conexion.commit()
+    conexion.close()
+    return 0
+
+def eliminar_consumo(idmesa):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("DELETE FROM consumo WHERE idMesa = ?", (idmesa,))
+    conexion.commit()
+    conexion.close()
+    return 0
+
 
 # FUNCIONES MODIFICAR
 def modificar_producto(id, nombre, precio, categoria):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("UPDATE producto SET nombre = (?), precio = (?), categoria = (?) WHERE id = ?", 
+    cursor.execute("UPDATE producto SET nombre = ?, precio = ?, categoria = ? WHERE id = ?", 
                    (nombre, precio, categoria, id))
-    conexion.commit()
-
-    conexion.close()
-    return 0
-
-# FUNCIÓN PARA EL FUTURO 
-###def transladar_mesa(idmesaVieja, idmesaNueva):
-    conexion = conectar()
-    cursor = conexion.cursor()
-
-    cursor.execute("UPDATE mesa SET id = (?) WHERE id = (?)", 
-                   (idmesaNueva, idmesaVieja))
     conexion.commit()
 
     conexion.close()
@@ -283,7 +266,7 @@ def modificar_estado_mesa(estado, id):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("UPDATE mesa SET estado = (?) WHERE id = (?)", 
+    cursor.execute("UPDATE mesa SET estado = ? WHERE id = ?", 
                    (estado, id))
     conexion.commit()
 
@@ -291,7 +274,6 @@ def modificar_estado_mesa(estado, id):
     return 0
 
 # para que pueda aparecer en el main y en el ticket antes de pagar y q se cierre la mesa
-# DESPUÉS INTEGRARLO CON LA FUNCIÓN CERRAR_MESA !!!!!!!!
 def calcular_total_provisorio(idmesa):
     conexion = conectar()
     cursor = conexion.cursor()
@@ -305,31 +287,20 @@ def calcular_total_provisorio(idmesa):
     productos = cursor.fetchall()
 
     total = 0
-    for precio, cantidad in productos:
+    for cantidad, precio in productos:
         total += precio * cantidad
     
-    conexion.commit()
+    total = round(total, 2)
+
     conexion.close()
     
     return total
 
 def cerrar_mesa(idmesa, metodoPago):
+    total = calcular_total_provisorio(idmesa)
+    
     conexion = conectar()
     cursor = conexion.cursor()
-
-    cursor.execute("""
-                   SELECT producto.precio, consumo.cantidad
-                   FROM consumo JOIN producto ON consumo.idProducto = producto.id
-                   WHERE consumo.idMesa = ?
-                   """, (idmesa,))
-    
-    productos = cursor.fetchall()
-
-    total = 0
-    for precio, cantidad in productos:
-        total += precio * cantidad
-    
-    total = round(total, 2)
 
     cursor.execute("INSERT INTO venta (total, metodoPago, idMesa) VALUES (?,?,?)", (total, metodoPago, idmesa))
     idVenta = cursor.lastrowid
@@ -342,6 +313,7 @@ def cerrar_mesa(idmesa, metodoPago):
     
     return total
 
+# función para que el historial de ventas se guarde en un archivo de texto
 def guardar_historial_venta(idventa, idmesa, total, metodoPago):
     with open("historial_ventas.txt", "a", encoding="utf-8") as f:
-        f.write(f"ID: {idventa} | Mesa: {idmesa} | Total: {total} | Metodo de pago: {metodoPago} | Hora: {datetime.datetime.now().strftime("%d/%m/%Y %H:%M")}\n")
+        f.write(f"ID: {idventa} | Mesa: {idmesa} | Total: {total} | Metodo de pago: {metodoPago} | Hora: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
