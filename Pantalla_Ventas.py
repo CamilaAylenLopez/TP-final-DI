@@ -7,7 +7,7 @@ class VentasWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Historial ventas")
-        self.setGeometry(500,100,300,600)
+        self.setGeometry(500,100,300,300)
 
         self.historial()
     
@@ -16,12 +16,12 @@ class VentasWindow(QDialog):
 
         self.titulo = QLabel("Historial de ventas...")
         self.titulo.setAlignment(Qt.AlignTop)
-        self.titulo.setStyleSheet("font-size: 18px; font-weight: bold; padding: 0;")
+        self.titulo.setStyleSheet("font-size: 18px; font-weight: bold; padding: 2px;")
         layout.addWidget(self.titulo)
 
         self.ventas = QLabel("")
         self.ventas.setAlignment(Qt.AlignTop)
-        self.ventas.setStyleSheet("font-size: 14px; padding: 0;")
+        self.ventas.setStyleSheet("font-size: 14px; padding: 5px;")
         layout.addWidget(self.ventas)
 
         self.setLayout(layout)
