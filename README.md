@@ -15,6 +15,6 @@ Permite gestionar:
 
 ## 2. Estructura del proyecto
 
-##3. Mejoras para el futuro
+## 3. Mejoras para el futuro
 - Poder elegir mesas, transladar el consumo de una mesa a otra, dividir el consumo para pagar la cuenta, entre otras cosas.
 - Poder eleminar algo especifico del ticket.
