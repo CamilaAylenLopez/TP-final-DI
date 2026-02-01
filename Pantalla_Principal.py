@@ -21,6 +21,9 @@ class MainWindow(QMainWindow):
         grid = QGridLayout()
         central_widget.setLayout(grid)
 
+        # menú
+        self.crear_menu()
+
         # separo todo en las 4 categorias principales
         self.widget_categorias = QWidget()
         self.widget_productos = QWidget()
@@ -75,6 +78,21 @@ class MainWindow(QMainWindow):
         self.layout_ticket.addWidget(self.total)
         
         self.cargar_productos()
+
+    def crear_menu(self):
+        menu_bar = QMenuBar()
+        self.setMenuBar(menu_bar)
+
+        opciones_menu = QMenu("Opciones")
+        menu_bar.addMenu(opciones_menu)
+
+        editar_accion = QAction("Editar precios", self)
+        editar_accion.triggered.connect(self.accion_editar_producto)
+        opciones_menu.addAction(editar_accion)
+
+        salir_accion = QAction("Salir", self)
+        salir_accion.triggered.connect(self.accion_salir_app)
+        opciones_menu.addAction(salir_accion)
 
     def mostrar_categorias(self):
         categorias = {

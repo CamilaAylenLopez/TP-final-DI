@@ -1,5 +1,4 @@
-ID: 1 | Mesa: 1 | Total: 6.6 | Metodo de pago: tarjeta | Hora: 27/01/2026 17:35
-ID: 2 | Mesa: 0 | Total: 15.5 | Metodo de pago: efectivo | Hora: 27/01/2026 17:35
-ID: 3 | Mesa: 0 | Total: 12.5 | Metodo de pago: tarjeta | Hora: 27/01/2026 17:36
-ID: 4 | Mesa: 0 | Total: 13.0 | Metodo de pago: efectivo | Hora: 31/01/2026 23:23
-ID: 5 | Mesa: 0 | Total: 20.8 | Metodo de pago: efectivo | Hora: 01/02/2026 00:51
+ID: 1 | Mesa: 1 | Total: 6.6 | Metodo de pago: tarjeta | Hora: 2026-02-01 18:30:09
+ID: 2 | Mesa: 0 | Total: 17.4 | Metodo de pago: efectivo | Hora: 2026-02-01 18:30:35
+ID: 3 | Mesa: 0 | Total: 39.6 | Metodo de pago: efectivo | Hora: 2026-02-01 18:31:47
+ID: 4 | Mesa: 0 | Total: 6.0 | Metodo de pago: tarjeta | Hora: 2026-02-01 18:48:55

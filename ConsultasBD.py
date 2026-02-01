@@ -34,14 +34,13 @@ def crear_tablas():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         total REAL,
         metodoPago TEXT,
-        idMesa INTEGER REFERENCES mesa(id)
+        idMesa INTEGER REFERENCES mesa(id),
+        fecha DATETIME
     );
     """)
 
     conexion.commit()
     conexion.close()
-
-
 
 
 #FUNCIONES AGREGAR
@@ -73,9 +72,11 @@ def agregar_venta(total, metodoPago, idMesa):
     conexion = conectar()
     cursor = conexion.cursor()
 
+    fecha_actual = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     cursor.execute(
-        "INSERT INTO venta (total, metodoPago, idMesa) VALUES (?, ?, ?)",
-        (total, metodoPago, idMesa)
+        "INSERT INTO venta (total, metodoPago, idMesa, fecha) VALUES (?, ?, ?, ?)",
+        (total, metodoPago, idMesa, fecha_actual)
     )
 
     conexion.commit()
@@ -302,18 +303,20 @@ def cerrar_mesa(idmesa, metodoPago):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("INSERT INTO venta (total, metodoPago, idMesa) VALUES (?,?,?)", (total, metodoPago, idmesa))
+    fecha_actual = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    cursor.execute("INSERT INTO venta (total, metodoPago, idmesa, fecha) VALUES (?,?,?,?)", (total, metodoPago, idmesa, fecha_actual))
     idVenta = cursor.lastrowid
     cursor.execute("UPDATE mesa SET estado = ? WHERE id = ?", ("vacio", idmesa))
     cursor.execute("DELETE FROM consumo WHERE idMesa = ?", (idmesa,))
     conexion.commit()
     conexion.close()
 
-    guardar_historial_venta(idVenta, idmesa, total, metodoPago)
+    guardar_historial_venta(idVenta, idmesa, total, metodoPago, fecha_actual)
     
     return total
 
 # función para que el historial de ventas se guarde en un archivo de texto
-def guardar_historial_venta(idventa, idmesa, total, metodoPago):
+def guardar_historial_venta(idventa, idmesa, total, metodoPago, fecha_actual):
     with open("historial_ventas.txt", "a", encoding="utf-8") as f:
-        f.write(f"ID: {idventa} | Mesa: {idmesa} | Total: {total} | Metodo de pago: {metodoPago} | Hora: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
+        f.write(f"ID: {idventa} | Mesa: {idmesa} | Total: {total} | Metodo de pago: {metodoPago} | Hora: {fecha_actual}\n")
