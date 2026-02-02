@@ -10,7 +10,7 @@ Funciones principales:
 - Seleccionar productos
 - Ver ticket
 - Hacer cobros
-- ver el historial de ventas
+- Ver el historial de ventas
 - Editar los precios de los productos
 - Persistencia en base de datos (SQLite)
 

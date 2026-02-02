@@ -5,7 +5,8 @@ from PySide6.QtGui import *
 from ConsultasBD import *
 from Pantalla_Ticket import *
 from Pantalla_EditarProducto import FormularioEmergente
-from Pantalla_Ventas import *
+from Pantalla_EliminarProducto import EliminarProductoDialog
+from Pantalla_Ventas import VentasWindow
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -73,7 +74,7 @@ class MainWindow(QMainWindow):
 
         self.ticket_productos = QLabel("")
         self.scroll_area.setWidget(self.ticket_productos)
-        self.total = QLabel("")
+        self.total = QLabel("Total: 0")
         self.layout_ticket.addStretch()
         self.layout_ticket.addWidget(self.total)
         
@@ -154,7 +155,7 @@ class MainWindow(QMainWindow):
         productos = ver_consumo_por_mesa(self.idmesa) # la función se encarga de traer los productos anteriores de la mesa
         
         self.ticket_productos.clear()
-        for n, c, p in productos:
+        for n, c, p, categoria in productos:
             self.ticket_productos.setText(self.ticket_productos.text() + f"\n{c}   --   {n}   ---   {p}")
             self.ticket_productos.setStyleSheet("font-size: 16px;")
 
@@ -211,12 +212,12 @@ class MainWindow(QMainWindow):
     
     def accion_borrar(self):
         eliminar_consumo(self.idmesa)
-        print("VERIFICRA QUE SE ELIMINO (SI APARECEN CORCHETES VACIOS ES XQ SI SE LIMINO): ")
-        consumo = ver_consumo_por_mesa(self.idmesa)
-        for c in consumo:
-            print(c)
+        #print("VERIFICRA QUE SE ELIMINO (SI APARECEN CORCHETES VACIOS ES XQ SI SE LIMINO): ")
+        #consumo = ver_consumo_por_mesa(self.idmesa)
+        #for c in consumo:
+            #print(c)
         
-        self.total.setText("")
+        self.total.setText("Total: 0")
         self.ticket_productos.setText("")
     
     def accion_cobrar(self):
@@ -225,7 +226,7 @@ class MainWindow(QMainWindow):
             return
         self.accion_ticket()
         total = str(cerrar_mesa(self.idmesa, "efectivo"))
-        self.total.setText("")
+        self.total.setText("Total: 0")
         self.ticket_productos.setText("")
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
 
@@ -235,7 +236,7 @@ class MainWindow(QMainWindow):
             return
         self.accion_ticket()
         total = str(round(cerrar_mesa(self.idmesa, "tarjeta"), 2))
-        self.total.setText("")
+        self.total.setText("Total: 0")
         self.ticket_productos.setText("")
         QMessageBox.information(self, "Atención", f"Pago de {total} aceptado")
 
@@ -245,8 +246,9 @@ class MainWindow(QMainWindow):
         self.cargar_productos() #para que se cargue el ticket con los nuevos precios
     
     def accion_eliminar_producto(self):
-        # hacer q cuando se toca este boton salga un menu con los productos que hay y que el que toque se elimine
-        QMessageBox.information(self,"proximamente","proximamente")
+        dialogo = EliminarProductoDialog(self.idmesa)
+        dialogo.exec()
+        self.cargar_productos()
     
     def accion_historial_ventas(self):
         ventana_ventas = VentasWindow()

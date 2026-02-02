@@ -40,7 +40,7 @@ class TicketWindow(QWidget):
         self.tabla.verticalHeader().setVisible(False)
         self.tabla.setHorizontalHeaderLabels(["cantidad", "Producto", "SubTotal"])
 
-        for fila, (nombre, cantidad, precio) in enumerate(consumo):
+        for fila, (nombre, cantidad, precio, categoria) in enumerate(consumo):
             subtotal = cantidad * precio
 
             self.tabla.setItem(fila, 0, QTableWidgetItem(str(cantidad)))

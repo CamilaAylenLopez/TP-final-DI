@@ -129,11 +129,11 @@ def ver_consumo_por_mesa(idMesa):
     conexion = conectar()
     cursor = conexion.cursor()
 
-    cursor.execute("""SELECT producto.nombre, consumo.cantidad, producto.precio  
+    cursor.execute("""SELECT producto.nombre, consumo.cantidad, producto.precio, producto.categoria  
                    FROM consumo JOIN producto ON consumo.idProducto = producto.id
                    WHERE consumo.idMesa = ?""", (idMesa,))
+    
     consumo = cursor.fetchall()
-
     conexion.close()
     return consumo
 
@@ -250,6 +250,29 @@ def eliminar_consumo(idmesa):
     conexion.close()
     return 0
 
+# borra el consumo de una mesa, ejemplo se coloco una cocacola en la mesa 2, pero ocurre algo y ya no la quieren y se tiene que eliminar.
+# la idea es que si hay una cocacola, por ejemplo, se borra completamente pero si hay dos cocacolas solo se borre (o sea que la cantidad disminuye -1)
+def eliminar_producto_de_mesa(idmesa, idproducto):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT cantidad FROM consumo WHERE idMesa = ? AND idProducto = ?", (idmesa, idproducto,))
+    fila = cursor.fetchone()
+    
+    if not fila:
+        conexion.close()
+        return
+    
+    cantidad = fila[0]
+
+    if cantidad > 1:
+        cursor.execute("UPDATE consumo SET cantidad = cantidad - 1 WHERE idMesa = ? AND idProducto = ?", (idmesa, idproducto,))
+    else:
+        cursor.execute("DELETE FROM consumo WHERE idMesa = ? AND idProducto = ?", (idmesa,idproducto,))
+        
+    conexion.commit()
+    conexion.close()
+    return 0
 
 # FUNCIONES MODIFICAR
 def modificar_producto(id, nombre, precio, categoria):
