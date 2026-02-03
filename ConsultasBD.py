@@ -2,12 +2,15 @@ import sqlite3
 import datetime
 
 def conectar():
-    return sqlite3.connect("baseDatos.db") #si no existe lo crea
+    conexion = sqlite3.connect("baseDatos.db")
+    conexion.execute("PRAGMA foreign_keys = ON;")
+    return conexion
 
 # CREAR TABLAS
 def crear_tablas():
     conexion = conectar()
     cursor = conexion.cursor()
+
     cursor.execute("PRAGMA foreign_keys = ON;")
 
     cursor.execute("""
@@ -27,7 +30,9 @@ def crear_tablas():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         idProducto INTEGER REFERENCES producto(id),
         idMesa INTEGER REFERENCES mesa(id),
-        cantidad INT
+        cantidad INT,
+        FOREIGN KEY (idProducto) REFERENCES producto(id) ON DELETE CASCADE,
+        FOREIGN KEY (idMesa) REFERENCES mesa(id) ON DELETE CASCADE
     );""")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS venta (
@@ -236,7 +241,17 @@ def eliminar_producto(id):
     conexion = conectar()
     cursor = conexion.cursor()
 
+    cursor.execute("DELETE FROM consumo WHERE idProducto = ?", (id,))
     cursor.execute("DELETE FROM producto WHERE id = ?", (id,))
+    conexion.commit()
+    conexion.close()
+    return 0
+
+def eliminar_mesa(id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    cursor.execute("DELETE FROM mesa WHERE id = ?", (id,))
     conexion.commit()
     conexion.close()
     return 0
