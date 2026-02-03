@@ -36,8 +36,9 @@ La aplicación fue desarrollada con:
 - Pyside6
 - SQLite3
 
-## 4. Estructura del proyecto
-
+## 4. Si hay problema con la base de datos...
+- Borrar los archivos baseDatos.db e historial_ventas.txt
+- Ejecutar el archivo Datos.py
 
 ## 5. Mejoras para el futuro
 - Poder elegir mesas desde la interfaz,
