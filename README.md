@@ -32,7 +32,7 @@ Funcionamiento del cobro:
 
 ## 3. Tecnologías
 La aplicación fue desarrollada con:
-- Python 3
+- Python
 - Pyside6
 - SQLite3
 
