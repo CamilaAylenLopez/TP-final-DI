@@ -44,5 +44,4 @@ La aplicación fue desarrollada con:
 - Poder elegir mesas desde la interfaz,
 - Transferir el consumo de una mesa a otra.
 - Dividir el consumo para pagar separados.
-- Eliminar ítems especifico del ticket.
 - Sistema de login con roles (admin/empleado).
