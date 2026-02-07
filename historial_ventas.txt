@@ -6,3 +6,4 @@ ID: 5 | Mesa: 0 | Total: 12.4 | Metodo de pago: efectivo | Hora: 2026-02-04 00:2
 ID: 6 | Mesa: 0 | Total: 1.5 | Metodo de pago: tarjeta | Hora: 2026-02-04 00:21:33
 ID: 7 | Mesa: 0 | Total: 13.9 | Metodo de pago: efectivo | Hora: 2026-02-04 00:21:52
 ID: 8 | Mesa: 0 | Total: 21.6 | Metodo de pago: efectivo | Hora: 2026-02-04 00:22:14
+ID: 9 | Mesa: 0 | Total: 48.2 | Metodo de pago: efectivo | Hora: 2026-02-07 09:34:02
